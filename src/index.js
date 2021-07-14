@@ -66,7 +66,17 @@ const App = {
   },
 
   generateNumbers: async function () {
+    var num1 = Math.floor(Math.random() * 50) + 10; // 0 ~ 49 까지의 값 , Math.floor <= 소숫점 버리게
+    var num2 = Math.floor(Math.random() * 50) + 10; // 0 ~ 49 까지의 값 , Math.floor <= 소숫점 버리게
+    sessionStorage.setItem('result', num1 + num2);
 
+    $('#start').hide();
+    $('#num1').text(num1);
+    $('#num2').text(num2);
+    $('#question').show();
+    document.querySelector('#answer').focus();
+
+    this.showTimer();
   },
 
   submitAnswer: async function () {
@@ -148,6 +158,7 @@ const App = {
     $('#loginModal').modal('hide');
     $('#login').hide();
     $('#logout').show();
+    $('#game').show();
     $('#address').append('<br>' + '<p>' + '내 계정 주소 : ' + walletInstance.address + '</p>');
     $('#contractBalance')
     .append('<p>' + '이벤트 잔액 : ' + cav.utils.fromPeb(await this.callContractBalance(), "KLAY") + ' KLAY'+'</p>');
@@ -164,7 +175,19 @@ const App = {
   },
 
   showTimer: function () {
+    var seconds = 3;
+    $('#timer').text(seconds);
 
+    var interval = setInterval(() => {
+      $('#timer').text(--seconds);
+      if(seconds <= 0) {
+        $('#timer').text('');
+        $('#answer').val('');
+        $('#question').hide();
+        $('#start').show();
+        clearInterval(interval);
+      }
+    }, 1000);
   },
 
   showSpinner: function () {
