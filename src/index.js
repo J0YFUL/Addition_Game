@@ -1,4 +1,5 @@
 import Caver from "caver-js";
+import {Spinner} from "spin.js";
 
 const config = {
   rpcURL: 'https://api.baobab.klaytn.net:8651'
@@ -73,6 +74,7 @@ const App = {
   },
 
   deposit: async function () {
+    var spinner = this.showSpinner();
     const walletInstance = this.getWallet();
     if (walletInstance) {
       if((await this.callOwner()).toUpperCase() !== walletInstance.address.toUpperCase()) return; // 다르면 바로 리턴
@@ -83,18 +85,21 @@ const App = {
             from: walletInstance.address,
             gas: '250000',
             value: cav.utils.toPeb(amount, "KLAY")
-          })
-          .once('transactionHash', (txHash) => {
-            console.log(`txHash: ${txHash}`);
-          })
-          .once('receipt', (receipt) => {
-            console.log(`(#${receipt.blockNumber})`, receipt);
-            alert(amount + " KLAY를 컨트랙트에 송금했습니다.");
-            location.reload();
-          })
-          .once('error', (error) => {
-            alert(error.message);
-          });
+          }).then(spinner.stop())
+          .then(alert(amount + " KLAY를 컨트랙트에 송금했습니다."))
+          .then(location.reload());
+          // .once('transactionHash', (txHash) => {
+          //   console.log(`txHash: ${txHash}`);
+          // })
+          // .once('receipt', (receipt) => {
+          //   console.log(`(#${receipt.blockNumber})`, receipt);
+          //   spinner.stop();
+          //   alert(amount + " KLAY를 컨트랙트에 송금했습니다.");
+          //   location.reload();
+          // })
+          // .once('error', (error) => {
+          //   alert(error.message);
+          // });
         }
         return;
       }
@@ -163,7 +168,8 @@ const App = {
   },
 
   showSpinner: function () {
-
+    var target = document.getElementById("spin");
+    return new Spinner(opts).spin(target);
   },
 
   receiveKlay: function () {
