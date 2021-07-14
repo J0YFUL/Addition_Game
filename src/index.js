@@ -80,7 +80,19 @@ const App = {
   },
 
   submitAnswer: async function () {
-
+    const result = sessionStorage.getItem('result');
+    var answer = $('#answer').val();
+    if(answer === result) {
+      if (confirm("정답입니다!! (0.1 KLAY 보상)")) {
+        if (await this.callContractBalance() >= 0.1) { // 잔액확인 함수로 받아옴. 비교
+          this.receiveKlay();
+        } else {
+          alert("KLAY가 부족하여 보상을 제공받지 못했습니다..");
+        }
+      }
+    } else {
+      alert("틀려버렸고..");
+    }
   },
 
   deposit: async function () {
@@ -175,7 +187,7 @@ const App = {
   },
 
   showTimer: function () {
-    var seconds = 3;
+    var seconds = 2;
     $('#timer').text(seconds);
 
     var interval = setInterval(() => {
@@ -196,7 +208,30 @@ const App = {
   },
 
   receiveKlay: function () {
+    var spinner = this.showSpinner();
+    const walletInstance = this.getWallet();
 
+    if (!walletInstance) return;
+
+    agContract.methods.transfer(cav.utils.toPeb("0.1","KLAY")).send({
+      from : walletInstance.address, 
+      gas : '250000' // value 필드는 payable 함수가 아니라서 안넣음, 넘기지 않음.
+    }).then(function (receipt) {
+      if (receipt.status) {
+        spinner.stop();
+        alert("0.1 KLAY가 " + walletInstance.address + " 계정으로 전송되었습니다.");
+        $('#transaction').html("");
+        $('#transaction')
+        .append(`<p><a href='https://baobab.klaytnscope.com/tx/${receipt.transactionHash}'
+                    target='_blank'>클레이튼 scope에서 트랜잭션 확인</a></p>`);
+        return agContract.methods.getBalance().call()
+        .then(function (balance) {
+          $('#contractBalance').html("");
+          $('#contractBalance')
+          .append('<p>' + '이벤트 잔액 : ' + cav.utils.fromPeb(balance, "KLAY") + ' KLAY' + '</p>');
+        })
+      }
+    })
   }
 };
 
