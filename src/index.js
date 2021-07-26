@@ -1,5 +1,9 @@
 import Caver from "caver-js";
+<<<<<<< HEAD
 import {Spinner} from 'spin.js';
+=======
+import {Spinner} from "spin.js";
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
 
 const config = {
   rpcURL: 'https://api.baobab.klaytn.net:8651'
@@ -20,7 +24,11 @@ const App = {
       try {
         cav.klay.accounts.wallet.add(JSON.parse(walletFromSession));
         this.changeUI(JSON.parse(walletFromSession));
+<<<<<<< HEAD
       } catch (e) {      
+=======
+      } catch (e) {
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
         sessionStorage.removeItem('walletInstance');
       }
     }
@@ -50,6 +58,7 @@ const App = {
   },
 
   handleLogin: async function () {
+<<<<<<< HEAD
     if (this.auth.accessType === 'keystore') { 
       try {
         const privateKey = cav.klay.accounts.decrypt(this.auth.keystore, this.auth.password).privateKey;
@@ -57,6 +66,15 @@ const App = {
       } catch (e) {      
         $('#message').text('비밀번호가 일치하지 않습니다.');
       }
+=======
+    if (this.auth.accessType === 'keystore') {
+      try {
+        const privateKey = cav.klay.accounts.decrypt(this.auth.keystore, this.auth.password).privateKey;
+        this.integrateWallet(privateKey);
+      } catch(e) {
+        $('#message').text('비밀번호가 일치하지 않습니다.');
+      } 
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
     }
   },
 
@@ -65,22 +83,36 @@ const App = {
     location.reload();
   },
 
+<<<<<<< HEAD
   generateNumbers: async function () {    
     var num1 = Math.floor((Math.random() * 50) + 10);
     var num2 = Math.floor((Math.random() * 50) + 10);
     sessionStorage.setItem('result', num1 + num2);    
+=======
+  generateNumbers: async function () {
+    var num1 = Math.floor(Math.random() * 50) + 10; // 0 ~ 49 까지의 값 , Math.floor <= 소숫점 버리게
+    var num2 = Math.floor(Math.random() * 50) + 10; // 0 ~ 49 까지의 값 , Math.floor <= 소숫점 버리게
+    sessionStorage.setItem('result', num1 + num2);
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
 
     $('#start').hide();
     $('#num1').text(num1);
     $('#num2').text(num2);
+<<<<<<< HEAD
     $('#question').show(); 
     document.querySelector('#answer').focus();
     
+=======
+    $('#question').show();
+    document.querySelector('#answer').focus();
+
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
     this.showTimer();
   },
 
   submitAnswer: async function () {
     const result = sessionStorage.getItem('result');
+<<<<<<< HEAD
     var answer = $('#answer').val();  
 
     if (answer === result) {
@@ -93,15 +125,33 @@ const App = {
       }
     } else {
       alert("땡! 초등학생도 하는데 ㅠㅠ");
+=======
+    var answer = $('#answer').val();
+    if(answer === result) {
+      if (confirm("정답입니다!! (0.1 KLAY 보상)")) {
+        if (await this.callContractBalance() >= 0.1) { // 잔액확인 함수로 받아옴. 비교
+          this.receiveKlay();
+        } else {
+          alert("KLAY가 부족하여 보상을 제공받지 못했습니다..");
+        }
+      }
+    } else {
+      alert("틀려버렸고..");
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
     }
   },
 
   deposit: async function () {
     var spinner = this.showSpinner();
     const walletInstance = this.getWallet();
+<<<<<<< HEAD
 
     if (walletInstance) {
       if (await this.callOwner() !== walletInstance.address) return; 
+=======
+    if (walletInstance) {
+      if((await this.callOwner()).toUpperCase() !== walletInstance.address.toUpperCase()) return; // 다르면 바로 리턴
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
       else {
         var amount = $('#amount').val();
         if (amount) {
@@ -109,6 +159,7 @@ const App = {
             from: walletInstance.address,
             gas: '250000',
             value: cav.utils.toPeb(amount, "KLAY")
+<<<<<<< HEAD
           })        
           .once('transactionHash', (txHash) => {
             console.log(`txHash: ${txHash}`);
@@ -124,6 +175,25 @@ const App = {
           }); 
         }
         return;    
+=======
+          }).then(spinner.stop())
+          .then(alert(amount + " KLAY를 컨트랙트에 송금했습니다."))
+          .then(location.reload());
+          // .once('transactionHash', (txHash) => {
+          //   console.log(`txHash: ${txHash}`);
+          // })
+          // .once('receipt', (receipt) => {
+          //   console.log(`(#${receipt.blockNumber})`, receipt);
+          //   spinner.stop();
+          //   alert(amount + " KLAY를 컨트랙트에 송금했습니다.");
+          //   location.reload();
+          // })
+          // .once('error', (error) => {
+          //   alert(error.message);
+          // });
+        }
+        return;
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
       }
     }
   },
@@ -154,20 +224,32 @@ const App = {
 
   integrateWallet: function (privateKey) {
     const walletInstance = cav.klay.accounts.privateKeyToAccount(privateKey);
+<<<<<<< HEAD
     cav.klay.accounts.wallet.add(walletInstance)
     sessionStorage.setItem('walletInstance', JSON.stringify(walletInstance));
     this.changeUI(walletInstance);  
+=======
+    cav.klay.accounts.wallet.add(walletInstance);
+    sessionStorage.setItem('walletInstance', JSON.stringify(walletInstance));
+    this.changeUI(walletInstance);
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
   },
 
   reset: function () {
     this.auth = {
+<<<<<<< HEAD
       keystore: '',
       password: ''
+=======
+      keystore : '',
+      password : '' 
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
     };
   },
 
   changeUI: async function (walletInstance) {
     $('#loginModal').modal('hide');
+<<<<<<< HEAD
     $("#login").hide(); 
     $('#logout').show();
     $('#game').show();
@@ -177,6 +259,18 @@ const App = {
     if (await this.callOwner() === walletInstance.address) {
       $("#owner").show(); 
     }     
+=======
+    $('#login').hide();
+    $('#logout').show();
+    $('#game').show();
+    $('#address').append('<br>' + '<p>' + '내 계정 주소 : ' + walletInstance.address + '</p>');
+    $('#contractBalance')
+    .append('<p>' + '이벤트 잔액 : ' + cav.utils.fromPeb(await this.callContractBalance(), "KLAY") + ' KLAY'+'</p>');
+
+    if((await this.callOwner()).toUpperCase() === walletInstance.address.toUpperCase()) {
+      $('#owner').show();
+    }
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
   },
 
   removeWallet: function () {
@@ -186,6 +280,7 @@ const App = {
   },
 
   showTimer: function () {
+<<<<<<< HEAD
     var seconds = 3;
     $('#timer').text(seconds);
     var interval = setInterval(function() {  
@@ -197,10 +292,25 @@ const App = {
         $('#start').show();          
         clearInterval(interval);
       }     
+=======
+    var seconds = 2;
+    $('#timer').text(seconds);
+
+    var interval = setInterval(() => {
+      $('#timer').text(--seconds);
+      if(seconds <= 0) {
+        $('#timer').text('');
+        $('#answer').val('');
+        $('#question').hide();
+        $('#start').show();
+        clearInterval(interval);
+      }
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
     }, 1000);
   },
 
   showSpinner: function () {
+<<<<<<< HEAD
     var target = document.getElementById('spin');
     return new Spinner(opts).spin(target);
   },
@@ -228,6 +338,38 @@ const App = {
       }
     });      
   }  
+=======
+    var target = document.getElementById("spin");
+    return new Spinner(opts).spin(target);
+  },
+
+  receiveKlay: function () {
+    var spinner = this.showSpinner();
+    const walletInstance = this.getWallet();
+
+    if (!walletInstance) return;
+
+    agContract.methods.transfer(cav.utils.toPeb("0.1","KLAY")).send({
+      from : walletInstance.address, 
+      gas : '250000' // value 필드는 payable 함수가 아니라서 안넣음, 넘기지 않음.
+    }).then(function (receipt) {
+      if (receipt.status) {
+        spinner.stop();
+        alert("0.1 KLAY가 " + walletInstance.address + " 계정으로 전송되었습니다.");
+        $('#transaction').html("");
+        $('#transaction')
+        .append(`<p><a href='https://baobab.klaytnscope.com/tx/${receipt.transactionHash}'
+                    target='_blank'>클레이튼 scope에서 트랜잭션 확인</a></p>`);
+        return agContract.methods.getBalance().call()
+        .then(function (balance) {
+          $('#contractBalance').html("");
+          $('#contractBalance')
+          .append('<p>' + '이벤트 잔액 : ' + cav.utils.fromPeb(balance, "KLAY") + ' KLAY' + '</p>');
+        })
+      }
+    })
+  }
+>>>>>>> fc3ba5251101edc2c7ad80f08cc3b970c9dc3789
 };
 
 window.App = App;
